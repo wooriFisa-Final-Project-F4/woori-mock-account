@@ -28,16 +28,19 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.NOT_FOUND)
                         .code(404)
                         .message("잘못된 API URL 요청입니다.")
-                        .build());
+                        .build()
+        );
     }
 
     // Custom Error Exception
+    @ExceptionHandler(CustomException.class)
     protected ApiResponse<?> handleCustomErrorException(CustomException e) {
         return ApiResponse.error(
                 ErrorDetails.builder()
                         .status(e.getCustomErrorCode().getStatus())
                         .code(e.getCustomErrorCode().getCode())
                         .message(e.getCustomErrorCode().getMessage())
+                        .build()
         );
     }
 
