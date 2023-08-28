@@ -2,7 +2,9 @@ package f4.woorimock.domain.account.service.impl;
 
 import f4.woorimock.domain.account.constant.BankingProduct;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
+import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.dto.response.CreateResponseDto;
+import f4.woorimock.domain.account.dto.response.LinkingResponseDto;
 import f4.woorimock.domain.account.persist.entity.Account;
 import f4.woorimock.domain.account.persist.repository.AccountQueryRepository;
 import f4.woorimock.domain.account.persist.repository.AccountRepository;
@@ -22,13 +24,12 @@ import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUN
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
+    private static final String BANK_PREFIX = "1002";
 
     private final AccountRepository accountRepository;
     private final AccountQueryRepository accountQueryRepository;
     private final Encryptor encryptor;
     private final ModelMapper modelMapper;
-
-    private static final String BANK_PREFIX = "1002";
 
     @Override
     @Transactional
@@ -63,5 +64,28 @@ public class AccountServiceImpl implements AccountService {
                         .createdAt(LocalDateTime.now())
                         .build()
         );
+    }
+
+    @Override
+    public LinkingResponseDto linkingAccount(LinkingRequestDto linkingRequestDto) {
+        Account account = accountRepository.findByAccountNumber(linkingRequestDto.getAccountNumber())
+                .orElseThrow(() -> new CustomException(CustomErrorCode.INVALID_ACCOUNT_NUMBER));
+
+        ownerValidate(account, linkingRequestDto.getName());
+        passwordValidate(account, linkingRequestDto.getPassword());
+
+        return modelMapper.map(account, LinkingResponseDto.class);
+    }
+
+    private static void ownerValidate(Account account, String name) {
+        if (!account.getName().equals(name)) {
+            throw new CustomException(CustomErrorCode.NOT_MATCH_OWNER);
+        }
+    }
+
+    private void passwordValidate(Account account, String password) {
+        if (!account.getPassword().equals(password)) {
+            throw new CustomException(CustomErrorCode.INCORRECT_PASSWORD_INPUT);
+        }
     }
 }

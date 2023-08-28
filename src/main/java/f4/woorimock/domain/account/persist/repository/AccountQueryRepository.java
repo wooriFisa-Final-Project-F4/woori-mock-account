@@ -5,8 +5,6 @@ import f4.woorimock.domain.account.persist.entity.QAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 @RequiredArgsConstructor
 public class AccountQueryRepository {

@@ -1,6 +1,7 @@
 package f4.woorimock.domain.account.controller;
 
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
+import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.service.AccountService;
 import f4.woorimock.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class AccountController {
     /*
      * @date : 2023.08.27
      * @author : yuki
-     * @param : name, password, arte_user_id(unique)
+     * @param : name, password, arteUserId(unique)
      * @description : arte_moㅕderni_id 조회를 통해 해당 유저가 이미 계좌를 가지고 있는지, 없는지 여부를 파악한다.
      */
     @PostMapping("/create")
@@ -29,5 +30,18 @@ public class AccountController {
             @Valid @RequestBody CreateRequestDto createRequestDto
     ) {
         return ApiResponse.success(accountService.createAuctionAccount(createRequestDto));
+    }
+
+    /*
+     * @date : 2023.08.27
+     * @author : yuki
+     * @param : accountNumber, password, arteUserId(unique)
+     * @description : arte_moderni 계좌 연동
+     */
+    @PostMapping("/linking")
+    public ApiResponse<?> linkingAccount(
+            @Valid @RequestBody LinkingRequestDto linkingRequestDto
+    ) {
+        return ApiResponse.success(accountService.linkingAccount(linkingRequestDto));
     }
 }
