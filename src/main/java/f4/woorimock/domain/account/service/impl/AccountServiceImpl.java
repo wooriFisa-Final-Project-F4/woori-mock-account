@@ -2,6 +2,7 @@ package f4.woorimock.domain.account.service.impl;
 
 import f4.woorimock.domain.account.constant.BankingProduct;
 import f4.woorimock.domain.account.dto.request.BidCheckRequestDto;
+import f4.woorimock.domain.account.dto.request.BidRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.dto.response.CreateResponseDto;
@@ -16,8 +17,8 @@ import f4.woorimock.global.utils.Encryptor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUNT;
@@ -83,16 +84,44 @@ public class AccountServiceImpl implements AccountService {
         bidAvailabilityValidator(account.getBalance(), account.getAuctionUseBalance(), bidCheckRequestDto.getBidPrice());
     }
 
+    private Account loadByArteUserId(Long arteUserId) {
+        return accountRepository.findByArteUserId(arteUserId)
+                .orElseThrow(() -> new CustomException(CustomErrorCode.NON_REGISTER_USER));
+    }
+
+    @Override
+    @Transactional
+    public void bidInfoUpdate(BidRequestDto bidRequestDto) {
+        Account preAccount;
+        Account curAccount;
+
+        if (bidRequestDto.getOption() == 2) {
+            preAccount = loadByArteUserId(bidRequestDto.getPreUserId());
+
+            String prePrice = bidFail(bidRequestDto.getPreBidPrice(), preAccount.getAuctionUseBalance());
+            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId());
+        }
+
+        curAccount = loadByArteUserId(bidRequestDto.getCurUserId());
+        String curPrice = bidSuccess(bidRequestDto.getCurBidPrice(), curAccount.getAuctionUseBalance());
+        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId());
+    }
+
+
+    private String bidFail(String preBidPrice, String auctionUseBalance) {
+        long returnPrice = Long.parseLong(auctionUseBalance) - Long.parseLong(preBidPrice);
+        return String.valueOf(returnPrice);
+    }
+
+    private String bidSuccess(String preBidPrice, String auctionUseBalance) {
+        return String.valueOf(Long.parseLong(auctionUseBalance) + Long.parseLong(preBidPrice));
+    }
+
     // 가용 금액
     private void bidAvailabilityValidator(String balance, String auctionUseBalance, String bidPrice) {
         if (!((Long.parseLong(balance) - Long.parseLong(auctionUseBalance)) >= Long.parseLong(bidPrice))) {
             throw new CustomException(CustomErrorCode.LACk_USABLE_BALANCE);
         }
-    }
-
-    private Account loadByArteUserId(Long arteUserId) {
-        return accountRepository.findByArteUserId(arteUserId)
-                .orElseThrow(() -> new CustomException(CustomErrorCode.NON_REGISTER_USER));
     }
 
     private Account loadByAccountNumber(String accountNumber) {

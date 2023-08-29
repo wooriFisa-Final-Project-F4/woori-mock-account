@@ -20,8 +20,9 @@ public enum CustomErrorCode {
     NOT_MATCH_OWNER(HttpStatus.FORBIDDEN, 402, "소유주명과 일치하지 않습니다."),
 
     // Not Found 404
-    NON_REGISTER_USER(HttpStatus.NOT_FOUND, 404, "계좌가 연동되지 않은 사용자입니다.");
+    NON_REGISTER_USER(HttpStatus.NOT_FOUND, 404, "계좌가 연동되지 않은 사용자입니다."),
     // Server Error 500
+    CAN_NOT_TRANSACTIOn(HttpStatus.INTERNAL_SERVER_ERROR, 500, "불가능한 트랜잭션 입니다."),
     ;
     private final HttpStatus status;
     private final int code;
