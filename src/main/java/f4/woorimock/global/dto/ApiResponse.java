@@ -16,7 +16,7 @@ public class ApiResponse<T> {
     private T data;
     private T error;
 
-    public static ApiResponse<?> successWithNoContent() {
+    public static ApiResponse successWithNoContent() {
         return new ApiResponse<>(SUCCESS.getApiStatus(), null, null);
     }
 

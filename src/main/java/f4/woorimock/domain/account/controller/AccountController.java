@@ -1,5 +1,6 @@
 package f4.woorimock.domain.account.controller;
 
+import f4.woorimock.domain.account.dto.request.BidCheckRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.service.AccountService;
@@ -44,4 +45,13 @@ public class AccountController {
     ) {
         return ApiResponse.success(accountService.linkingAccount(linkingRequestDto));
     }
+
+    @PostMapping("/bid/check")
+    public ApiResponse<?> bidAvailabilityCheck(
+            @Valid @RequestBody BidCheckRequestDto bidCheckRequestDto
+    ) {
+        accountService.bidAvailabilityCheck(bidCheckRequestDto);
+        return ApiResponse.successWithNoContent();
+    }
+
 }
