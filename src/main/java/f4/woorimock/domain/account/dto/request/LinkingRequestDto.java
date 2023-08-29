@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -14,10 +16,14 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LinkingRequestDto implements Serializable {
 
-    private String name;
-    private String accountNumber;
-    private String password;
+    @NotNull
     private Long arteUserId;
+    @NotBlank
+    private String name;
+    @NotBlank
+    private String accountNumber;
+    @NotBlank
+    private String password;
 }
 
 

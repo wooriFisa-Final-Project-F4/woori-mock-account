@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -14,7 +16,10 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BidCheckRequestDto implements Serializable {
 
+    @NotNull
     private Long arteUserId;
+    @NotBlank
     private String password;
+    @NotBlank
     private String bidPrice;
 }

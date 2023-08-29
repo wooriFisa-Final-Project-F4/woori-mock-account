@@ -7,16 +7,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateRequestDto {
+public class CreateRequestDto implements Serializable {
 
+    @NotNull
+    private Long arteUserId;
     @NotBlank
     private String name;
     @NotBlank
     private String password;
-    private Long arteUserId;
 }
