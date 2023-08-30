@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUNT;
 
@@ -100,12 +101,12 @@ public class AccountServiceImpl implements AccountService {
             preAccount = loadByArteUserId(bidRequestDto.getPreUserId());
 
             String prePrice = bidFail(bidRequestDto.getPreBidPrice(), preAccount.getAuctionUseBalance());
-            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId());
+            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId(), LocalDateTime.now());
         }
 
         curAccount = loadByArteUserId(bidRequestDto.getCurUserId());
         String curPrice = bidSuccess(bidRequestDto.getCurBidPrice(), curAccount.getAuctionUseBalance());
-        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId());
+        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId(), LocalDateTime.now());
     }
 
 
