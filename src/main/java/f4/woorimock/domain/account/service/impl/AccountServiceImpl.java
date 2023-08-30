@@ -8,7 +8,6 @@ import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.dto.response.CreateResponseDto;
 import f4.woorimock.domain.account.dto.response.LinkingResponseDto;
 import f4.woorimock.domain.account.persist.entity.Account;
-import f4.woorimock.domain.account.persist.repository.AccountQueryRepository;
 import f4.woorimock.domain.account.persist.repository.AccountRepository;
 import f4.woorimock.domain.account.service.AccountService;
 import f4.woorimock.global.constant.CustomErrorCode;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUNT;
 
@@ -29,7 +29,6 @@ public class AccountServiceImpl implements AccountService {
     private static final String BANK_PREFIX = "1002";
 
     private final AccountRepository accountRepository;
-    private final AccountQueryRepository accountQueryRepository;
     private final Encryptor encryptor;
     private final ModelMapper modelMapper;
 
@@ -48,9 +47,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private String createAccountNumber() {
-        Long recentId = accountQueryRepository.getRecentId();
-        recentId = (recentId == null) ? 0 : recentId;
-        return String.join("-", BANK_PREFIX, AUCTION_ACCOUNT.getProductCode(), String.format("%07d", recentId));
+        Long recentId = accountRepository.count() + 1;
+        return String.join("-", BANK_PREFIX, AUCTION_ACCOUNT.getProductCode(), reverse(String.format("%07d", recentId)));
+    }
+
+    private String reverse(String number) {
+        return new StringBuilder(number).reverse().toString();
     }
 
     private Account accountBuilder(CreateRequestDto createRequestDto, String accountNumber) {
@@ -99,12 +101,12 @@ public class AccountServiceImpl implements AccountService {
             preAccount = loadByArteUserId(bidRequestDto.getPreUserId());
 
             String prePrice = bidFail(bidRequestDto.getPreBidPrice(), preAccount.getAuctionUseBalance());
-            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId());
+            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId(), LocalDateTime.now());
         }
 
         curAccount = loadByArteUserId(bidRequestDto.getCurUserId());
         String curPrice = bidSuccess(bidRequestDto.getCurBidPrice(), curAccount.getAuctionUseBalance());
-        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId());
+        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId(), LocalDateTime.now());
     }
 
 
