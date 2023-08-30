@@ -1,11 +1,14 @@
 package f4.woorimock.domain.account.controller;
 
+import f4.woorimock.domain.account.dto.request.BidCheckRequestDto;
+import f4.woorimock.domain.account.dto.request.BidRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.service.AccountService;
 import f4.woorimock.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,4 +47,22 @@ public class AccountController {
     ) {
         return ApiResponse.success(accountService.linkingAccount(linkingRequestDto));
     }
+
+    @PutMapping("/bid")
+    public ApiResponse<?> bidInfoUpdate(
+            @Valid @RequestBody BidRequestDto bidRequestDto
+    ) {
+        accountService.bidInfoUpdate(bidRequestDto);
+        return ApiResponse.successWithNoContent();
+    }
+
+
+    @PostMapping("/bid/check")
+    public ApiResponse<?> bidAvailabilityCheck(
+            @Valid @RequestBody BidCheckRequestDto bidCheckRequestDto
+    ) {
+        accountService.bidAvailabilityCheck(bidCheckRequestDto);
+        return ApiResponse.successWithNoContent();
+    }
+
 }

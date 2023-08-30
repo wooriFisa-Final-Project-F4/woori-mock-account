@@ -14,12 +14,12 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateRequestDto implements Serializable {
+public class BidCheckRequestDto implements Serializable {
 
     @NotNull
     private Long arteUserId;
     @NotBlank
-    private String name;
-    @NotBlank
     private String password;
+    @NotBlank
+    private String bidPrice;
 }

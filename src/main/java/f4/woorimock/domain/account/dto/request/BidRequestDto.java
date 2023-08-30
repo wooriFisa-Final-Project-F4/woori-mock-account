@@ -8,18 +8,19 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateRequestDto implements Serializable {
+public class BidRequestDto {
 
     @NotNull
-    private Long arteUserId;
+    private int option;
+    private Long preUserId;
+    private String preBidPrice;
+    @NotNull
+    private Long curUserId;
     @NotBlank
-    private String name;
-    @NotBlank
-    private String password;
+    private String curBidPrice;
 }
