@@ -76,7 +76,7 @@ public class AccountController {
     public ApiResponse<?> bidInfoUpdate(
             @Valid @RequestBody BidRequestDto bidRequestDto
     ) {
-        log.info("입찰 수행, option : {}, preUserId : {}, preBidPrice : {}, curUserId : {}, curBidPrice",
+        log.info("입찰 수행. option : {}, preUserId : {}, preBidPrice : {}, curUserId : {}, curBidPrice : {}",
                 bidRequestDto.getOption(), bidRequestDto.getPreUserId(), bidRequestDto.getPreBidPrice(),
                 bidRequestDto.getCurUserId(), bidRequestDto.getCurBidPrice());
 
