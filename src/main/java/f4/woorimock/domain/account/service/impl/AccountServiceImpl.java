@@ -3,8 +3,10 @@ package f4.woorimock.domain.account.service.impl;
 import f4.woorimock.domain.account.constant.BankingProduct;
 import f4.woorimock.domain.account.dto.request.BidCheckRequestDto;
 import f4.woorimock.domain.account.dto.request.BidRequestDto;
+import f4.woorimock.domain.account.dto.request.CheckBalanceRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
+import f4.woorimock.domain.account.dto.response.CheckBalanceResponseDto;
 import f4.woorimock.domain.account.dto.response.CreateResponseDto;
 import f4.woorimock.domain.account.dto.response.LinkingResponseDto;
 import f4.woorimock.domain.account.persist.entity.Account;
@@ -19,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUNT;
 
@@ -42,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
                         }
                 );
 
-        Account account = accountBuilder(createRequestDto, createAccountNumber());
+        Account account = standByAccount(createRequestDto, createAccountNumber());
         return modelMapper.map(account, CreateResponseDto.class);
     }
 
@@ -55,7 +56,7 @@ public class AccountServiceImpl implements AccountService {
         return new StringBuilder(number).reverse().toString();
     }
 
-    private Account accountBuilder(CreateRequestDto createRequestDto, String accountNumber) {
+    private Account standByAccount(CreateRequestDto createRequestDto, String accountNumber) {
         return accountRepository.save(
                 Account.builder()
                         .name(createRequestDto.getName())
@@ -109,6 +110,16 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId(), LocalDateTime.now());
     }
 
+    @Override
+    public CheckBalanceResponseDto checkBalance(CheckBalanceRequestDto checkBalanceRequestDto) {
+        Account account = loadByAccountNumber(checkBalanceRequestDto.getAccountNumber());
+
+        if (account.getArteUserId() != checkBalanceRequestDto.getArteUserId()) {
+            throw new CustomException(CustomErrorCode.INVALID_ACCOUNT_OWNER);
+        }
+
+        return modelMapper.map(account , CheckBalanceResponseDto.class);
+    }
 
     private String bidFail(String preBidPrice, String auctionUseBalance) {
         long returnPrice = Long.parseLong(auctionUseBalance) - Long.parseLong(preBidPrice);
