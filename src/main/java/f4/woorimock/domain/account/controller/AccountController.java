@@ -28,7 +28,7 @@ public class AccountController {
     /*
      * @date : 2023.08.27
      * @author : yuki
-     * @param : name, password, arteUserId(unique)
+     * @param : CreateRequestDto(name, password, arteUserId)
      * @description : arte_moㅕderni_id 조회를 통해 해당 유저가 이미 계좌를 가지고 있는지, 없는지 여부를 파악한다.
      */
     @PostMapping("/create")
@@ -42,8 +42,8 @@ public class AccountController {
     /*
      * @date : 2023.08.27
      * @author : yuki
-     * @param : accountNumber, password, arteUserId(unique)
-     * @description : arte_moderni 계좌 연동
+     * @param : LinkingRequestDto(accountNumber, password, arteUserId)
+     * @description : arte_moderni 계좌 연동 API
      */
     @PostMapping("/linking")
     public ApiResponse<?> linkingAccount(
@@ -54,6 +54,12 @@ public class AccountController {
         return ApiResponse.success(accountService.linkingAccount(linkingRequestDto));
     }
 
+    /*
+    * @date : 2023.09.05
+    * @author : yuki
+    * @param : CheckBalanceRequestDto(arteUserId, accountNumber)
+    * @description : 계좌 잔액 조회 API
+    */
     @PostMapping("/check/balance")
     public ApiResponse<?> checkBalance(
             @Valid @RequestBody CheckBalanceRequestDto checkBalanceRequestDto) {
@@ -62,6 +68,12 @@ public class AccountController {
         return ApiResponse.success(accountService.checkBalance(checkBalanceRequestDto));
     }
 
+    /*
+     * @date : 2023.08.29
+     * @author : yuki
+     * @param : BidCheckRequestDto(arteUserId, password, bidPrice)
+     * @description : 입찰 가능 여부 조회 API
+     */
     @PostMapping("/bid/check")
     public ApiResponse<?> bidAvailabilityCheck(
             @Valid @RequestBody BidCheckRequestDto bidCheckRequestDto
@@ -72,6 +84,12 @@ public class AccountController {
     }
 
 
+    /*
+     * @date : 2023.08.29
+     * @author : yuki
+     * @param : BidRequestDto(option(이전 입찰자가 없는 경우 0 else 1), preUserId, preBidPrice, curUserId,curBidPrice)
+     * @description : 입찰자 및 금액 변경 API
+     */
     @PutMapping("/bid")
     public ApiResponse<?> bidInfoUpdate(
             @Valid @RequestBody BidRequestDto bidRequestDto
