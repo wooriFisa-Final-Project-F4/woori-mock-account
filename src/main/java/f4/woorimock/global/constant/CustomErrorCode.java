@@ -14,6 +14,7 @@ public enum CustomErrorCode {
     INVALID_ACCOUNT_NUMBER(HttpStatus.BAD_REQUEST, 400, "입력하신 계좌번호는 존재하지 않는 계좌번호 입니다."),
     INCORRECT_PASSWORD_INPUT(HttpStatus.BAD_REQUEST, 400, "비밀번호가 유효하지 않습니다."),
     LACk_USABLE_BALANCE(HttpStatus.BAD_REQUEST, 400, "입찰 가용 금액이 부족합니다."),
+    INVALID_ACCOUNT_OWNER(HttpStatus.BAD_REQUEST, 400, "계좌 번호의 소유주 고유번호가 일치하지 않습니다."),
     // Unathorized 401
 
     // Forbidden 402

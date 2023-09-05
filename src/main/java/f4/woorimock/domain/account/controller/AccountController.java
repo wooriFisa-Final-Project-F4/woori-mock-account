@@ -2,6 +2,7 @@ package f4.woorimock.domain.account.controller;
 
 import f4.woorimock.domain.account.dto.request.BidCheckRequestDto;
 import f4.woorimock.domain.account.dto.request.BidRequestDto;
+import f4.woorimock.domain.account.dto.request.CheckBalanceRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
 import f4.woorimock.domain.account.service.AccountService;
@@ -48,14 +49,11 @@ public class AccountController {
         return ApiResponse.success(accountService.linkingAccount(linkingRequestDto));
     }
 
-    @PutMapping("/bid")
-    public ApiResponse<?> bidInfoUpdate(
-            @Valid @RequestBody BidRequestDto bidRequestDto
-    ) {
-        accountService.bidInfoUpdate(bidRequestDto);
-        return ApiResponse.successWithNoContent();
+    @PostMapping("/check/balance")
+    public ApiResponse<?> checkBalance(
+            @Valid @RequestBody CheckBalanceRequestDto checkBalanceRequestDto) {
+        return ApiResponse.success(accountService.checkBalance(checkBalanceRequestDto));
     }
-
 
     @PostMapping("/bid/check")
     public ApiResponse<?> bidAvailabilityCheck(
@@ -65,4 +63,12 @@ public class AccountController {
         return ApiResponse.successWithNoContent();
     }
 
+
+    @PutMapping("/bid")
+    public ApiResponse<?> bidInfoUpdate(
+            @Valid @RequestBody BidRequestDto bidRequestDto
+    ) {
+        accountService.bidInfoUpdate(bidRequestDto);
+        return ApiResponse.successWithNoContent();
+    }
 }
