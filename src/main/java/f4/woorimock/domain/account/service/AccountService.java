@@ -5,6 +5,7 @@ import f4.woorimock.domain.account.dto.request.BidRequestDto;
 import f4.woorimock.domain.account.dto.request.CheckBalanceRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
+import f4.woorimock.domain.account.dto.request.TransferRequestDto;
 import f4.woorimock.domain.account.dto.response.CheckBalanceResponseDto;
 import f4.woorimock.domain.account.dto.response.CreateResponseDto;
 import f4.woorimock.domain.account.dto.response.LinkingResponseDto;
@@ -20,4 +21,6 @@ public interface AccountService {
     void bidAvailabilityCheck(BidCheckRequestDto bidCheckRequestDto);
 
     void bidInfoUpdate(BidRequestDto bidRequestDto);
+
+    void winningBidTransfer(TransferRequestDto transferRequestDto);
 }

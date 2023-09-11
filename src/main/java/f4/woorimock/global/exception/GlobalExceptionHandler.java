@@ -35,6 +35,8 @@ public class GlobalExceptionHandler {
     // Custom Error Exception
     @ExceptionHandler(CustomException.class)
     protected ApiResponse<?> handleCustomErrorException(CustomException e) {
+        log.error("API 요청 중 에러가 발생했습니다. ErrorCode : {}, ErrorMessage : {}",
+                e.getCustomErrorCode().getCode(), e.getCustomErrorCode().getMessage());
         return ApiResponse.error(
                 ErrorDetails.builder()
                         .status(e.getCustomErrorCode().getStatus())

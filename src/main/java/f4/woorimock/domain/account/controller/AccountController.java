@@ -5,14 +5,17 @@ import f4.woorimock.domain.account.dto.request.BidRequestDto;
 import f4.woorimock.domain.account.dto.request.CheckBalanceRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
+import f4.woorimock.domain.account.dto.request.TransferRequestDto;
 import f4.woorimock.domain.account.service.AccountService;
 import f4.woorimock.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -55,11 +58,11 @@ public class AccountController {
     }
 
     /*
-    * @date : 2023.09.05
-    * @author : yuki
-    * @param : CheckBalanceRequestDto(arteUserId, accountNumber)
-    * @description : 계좌 잔액 조회 API
-    */
+     * @date : 2023.09.05
+     * @author : yuki
+     * @param : CheckBalanceRequestDto(arteUserId, accountNumber)
+     * @description : 계좌 잔액 조회 API
+     */
     @PostMapping("/check/balance")
     public ApiResponse<?> checkBalance(
             @Valid @RequestBody CheckBalanceRequestDto checkBalanceRequestDto) {
@@ -99,6 +102,19 @@ public class AccountController {
                 bidRequestDto.getCurUserId(), bidRequestDto.getCurBidPrice());
 
         accountService.bidInfoUpdate(bidRequestDto);
+        return ApiResponse.successWithNoContent();
+    }
+
+    /*
+    *
+    *
+    * */
+    @PutMapping("/winning/bid-transfer")
+    public ApiResponse<?> winningBidTransfer(@Valid @RequestBody TransferRequestDto transferRequestDto) {
+        log.info("낙찰 수행 시작. arteUserId : {}, productName : {}, auctionPrice{}",
+                transferRequestDto.getArteUserId(), transferRequestDto.getProductName(), transferRequestDto.getProductName());
+
+        accountService.winningBidTransfer(transferRequestDto);
         return ApiResponse.successWithNoContent();
     }
 }
