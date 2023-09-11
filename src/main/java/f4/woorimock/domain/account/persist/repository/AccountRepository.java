@@ -17,6 +17,17 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByAccountNumber(String accountNumber);
 
     @Modifying
-    @Query(value = "UPDATE account SET auction_use_balance = :price, updated_at = :dateTime WHERE arte_user_id = :userId", nativeQuery = true)
+    @Query(value = "UPDATE account " +
+            "SET auction_use_balance = :price, " +
+            "updated_at = :dateTime " +
+            "WHERE arte_user_id = :userId", nativeQuery = true)
     void updateAuctionUseBalanceByArteUserId(String price, Long userId, LocalDateTime dateTime);
+
+    @Modifying
+    @Query(value = "UPDATE account " +
+            "SET balance = :balance, " +
+            "auction_use_balance = :auctionUseBalance, " +
+            "updated_at = :dateTime " +
+            "WHERE arte_user_id = :userId", nativeQuery = true)
+    void updateBalancesByArteUserId(String balance, String auctionUseBalance, Long userId, LocalDateTime dateTime);
 }

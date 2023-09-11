@@ -6,6 +6,7 @@ import f4.woorimock.domain.account.dto.request.BidRequestDto;
 import f4.woorimock.domain.account.dto.request.CheckBalanceRequestDto;
 import f4.woorimock.domain.account.dto.request.CreateRequestDto;
 import f4.woorimock.domain.account.dto.request.LinkingRequestDto;
+import f4.woorimock.domain.account.dto.request.TransferRequestDto;
 import f4.woorimock.domain.account.dto.response.CheckBalanceResponseDto;
 import f4.woorimock.domain.account.dto.response.CreateResponseDto;
 import f4.woorimock.domain.account.dto.response.LinkingResponseDto;
@@ -20,9 +21,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUNT;
+import static java.time.LocalDateTime.now;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
                         .balance("0")
                         .auctionUseBalance("0")
                         .arteUserId(createRequestDto.getArteUserId())
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(now())
                         .build()
         );
     }
@@ -95,19 +95,19 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void bidInfoUpdate(BidRequestDto bidRequestDto) {
-        Account preAccount;
-        Account curAccount;
+        Account preAccount = null;
+        Account curAccount = null;
 
         if (bidRequestDto.getOption() == 2) {
             preAccount = loadByArteUserId(bidRequestDto.getPreUserId());
 
-            String prePrice = bidFail(bidRequestDto.getPreBidPrice(), preAccount.getAuctionUseBalance());
-            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId(), LocalDateTime.now());
+            String prePrice = minusBalance(preAccount.getAuctionUseBalance(), bidRequestDto.getPreBidPrice());
+            accountRepository.updateAuctionUseBalanceByArteUserId(prePrice, preAccount.getArteUserId(), now());
         }
 
         curAccount = loadByArteUserId(bidRequestDto.getCurUserId());
-        String curPrice = bidSuccess(bidRequestDto.getCurBidPrice(), curAccount.getAuctionUseBalance());
-        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId(), LocalDateTime.now());
+        String curPrice = plusBalance(curAccount.getAuctionUseBalance(), bidRequestDto.getCurBidPrice());
+        accountRepository.updateAuctionUseBalanceByArteUserId(curPrice, curAccount.getArteUserId(), now());
     }
 
     @Override
@@ -118,16 +118,37 @@ public class AccountServiceImpl implements AccountService {
             throw new CustomException(CustomErrorCode.INVALID_ACCOUNT_OWNER);
         }
 
-        return modelMapper.map(account , CheckBalanceResponseDto.class);
+        return modelMapper.map(account, CheckBalanceResponseDto.class);
     }
 
-    private String bidFail(String preBidPrice, String auctionUseBalance) {
-        long returnPrice = Long.parseLong(auctionUseBalance) - Long.parseLong(preBidPrice);
+    @Override
+    @Transactional
+    public void winningBidTransfer(TransferRequestDto transferRequestDto) {
+        Account account = loadByArteUserId(transferRequestDto.getArteUserId());
+
+        if (!account.getName().equals(transferRequestDto.getUsername())) {
+            throw new CustomException(CustomErrorCode.NOT_MATCH_OWNER);
+        }
+
+        // update 잔고 - 옥션 가격, 입찰 금액 - 입찰 가격
+        if (Long.parseLong(account.getBalance()) - Long.parseLong(transferRequestDto.getAuctionPrice()) < 0) {
+            throw new IllegalArgumentException("잔액이 부족합니다.");
+        }
+
+        String changeBalance = minusBalance(account.getBalance(), transferRequestDto.getAuctionPrice());
+        String changeUseBalance = minusBalance(account.getAuctionUseBalance(), transferRequestDto.getAuctionPrice());
+
+        accountRepository.updateBalancesByArteUserId(
+                changeBalance, changeUseBalance, transferRequestDto.getArteUserId(), now());
+    }
+
+    private String minusBalance(String mainBalance, String subBalance) {
+        long returnPrice = Long.parseLong(mainBalance) - Long.parseLong(subBalance);
         return String.valueOf(returnPrice);
     }
 
-    private String bidSuccess(String preBidPrice, String auctionUseBalance) {
-        return String.valueOf(Long.parseLong(auctionUseBalance) + Long.parseLong(preBidPrice));
+    private String plusBalance(String mainBalance, String subBalance) {
+        return String.valueOf(Long.parseLong(mainBalance) + Long.parseLong(subBalance));
     }
 
     // 가용 금액
