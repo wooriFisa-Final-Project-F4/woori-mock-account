@@ -10,12 +10,10 @@ import f4.woorimock.domain.account.service.AccountService;
 import f4.woorimock.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -110,7 +108,7 @@ public class AccountController {
     *
     * */
     @PutMapping("/winning/bid-transfer")
-    public ApiResponse<?> winningBidTransfer(@Valid @RequestBody TransferRequestDto transferRequestDto) {
+    public ApiResponse<?> winningBidTransfer(@RequestBody TransferRequestDto transferRequestDto) {
         log.info("낙찰 수행 시작. arteUserId : {}, productName : {}, auctionPrice{}",
                 transferRequestDto.getArteUserId(), transferRequestDto.getProductName(), transferRequestDto.getProductName());
 

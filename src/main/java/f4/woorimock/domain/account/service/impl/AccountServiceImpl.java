@@ -72,11 +72,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public LinkingResponseDto linkingAccount(LinkingRequestDto accountRequestDto) {
         Account account = loadByAccountNumber(accountRequestDto.getAccountNumber());
         ownerValidate(account, accountRequestDto.getName());
         passwordValidate(account, accountRequestDto.getPassword());
 
+        accountRepository.updateAccountByArteUserId(account.getArteUserId(), now(), accountRequestDto.getAccountNumber());
         return modelMapper.map(account, LinkingResponseDto.class);
     }
 

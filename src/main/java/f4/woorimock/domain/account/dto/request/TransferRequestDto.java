@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TransferRequestDto {
+public class  TransferRequestDto {
 
     @NotNull
     private Long arteUserId;

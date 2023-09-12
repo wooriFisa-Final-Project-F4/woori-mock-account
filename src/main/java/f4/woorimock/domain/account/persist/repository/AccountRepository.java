@@ -30,4 +30,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             "updated_at = :dateTime " +
             "WHERE arte_user_id = :userId", nativeQuery = true)
     void updateBalancesByArteUserId(String balance, String auctionUseBalance, Long userId, LocalDateTime dateTime);
+
+    @Modifying
+    @Query(value = "UPDATE account " +
+            "SET arte_user_id = :userId, " +
+            "updated_at= :dateTime " +
+            "WHERE account_number = :accountNumber", nativeQuery = true)
+    void updateAccountByArteUserId(Long userId, LocalDateTime dateTime, String accountNumber);
 }
