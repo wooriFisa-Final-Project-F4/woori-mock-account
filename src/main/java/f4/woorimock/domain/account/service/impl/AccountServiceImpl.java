@@ -17,6 +17,7 @@ import f4.woorimock.global.constant.CustomErrorCode;
 import f4.woorimock.global.exception.CustomException;
 import f4.woorimock.global.utils.Encryptor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static f4.woorimock.domain.account.constant.BankingProduct.AUCTION_ACCOUNT;
 import static java.time.LocalDateTime.now;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -78,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
         ownerValidate(account, accountRequestDto.getName());
         passwordValidate(account, accountRequestDto.getPassword());
 
-        accountRepository.updateAccountByArteUserId(account.getArteUserId(), now(), accountRequestDto.getAccountNumber());
+        accountRepository.updateAccountByArteUserId(accountRequestDto.getArteUserId(), now(), accountRequestDto.getAccountNumber());
         return modelMapper.map(account, LinkingResponseDto.class);
     }
 
